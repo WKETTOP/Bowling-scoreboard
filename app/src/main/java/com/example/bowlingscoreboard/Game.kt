@@ -15,7 +15,6 @@ class Game(private val playersName: String = "") {
         frames.forEachIndexed { index, currentFrame ->
             totalScore += currentFrame.score
 
-            val nextFrame = frames.getOrNull(index + 1)
 
             if (currentFrame.isStrike) {
                 val nextFrame = frames.getOrNull(index + 1)
@@ -23,7 +22,6 @@ class Game(private val playersName: String = "") {
                 totalScore += nextFrame?.let { it.firstThrow + (frames.getOrNull(index + 2)?.firstThrow ?: 0) } ?: 0
             }
 
-            // Проверяем на спэир
             if (currentFrame.isSpare) {
                 val nextFrame = frames.getOrNull(index + 1)
 
