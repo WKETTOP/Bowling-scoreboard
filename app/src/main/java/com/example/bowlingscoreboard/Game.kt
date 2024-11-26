@@ -11,21 +11,23 @@ class Game(private val playersName: String = "") {
         val scores = mutableListOf<Int>()
         var totalScore = 0
 
-        for (i in frames.indices) {
-            val frame = frames[i]
-            totalScore += frame.score()
 
-            if (frame.isStrike()) {
-                if (i + 1 < frames.size) {
-                    totalScore += frames[i + 1].firstThrow
-                    if (i + 1 < frames.size - 1) {
-                        totalScore += frames[i + 1].secondThrow
-                    }
-                }
+        frames.forEachIndexed { index, currentFrame ->
+            totalScore += currentFrame.score
+
+            val nextFrame = frames.getOrNull(index + 1)
+
+            if (currentFrame.isStrike) {
+                val nextFrame = frames.getOrNull(index + 1)
+
+                totalScore += nextFrame?.let { it.firstThrow + (frames.getOrNull(index + 2)?.firstThrow ?: 0) } ?: 0
             }
 
-            if (frame.isSpare() && i < frames.size - 1) {
-                totalScore += frames[i + 1].firstThrow
+            // Проверяем на спэир
+            if (currentFrame.isSpare) {
+                val nextFrame = frames.getOrNull(index + 1)
+
+                totalScore += nextFrame?.firstThrow ?: 0
             }
             scores.add(totalScore)
         }
@@ -34,28 +36,28 @@ class Game(private val playersName: String = "") {
     }
 
     fun displayScoreboard(): String {
-        val playerRow = StringBuilder("$playersName\t")
-        val rollsRow = StringBuilder("Броски\t")
-        val scoreRow = StringBuilder("Счет\t")
+        val lineSeparator = System.lineSeparator()
+        var playerRow = "$playersName\t"
+        var rollsRow = "Броски\t"
+        var scoreRow = "Счет\t"
 
         val scores = calculateTotalScore()
 
-        for (i in frames.indices) {
-            val frame = frames[i]
+        frames.forEachIndexed { index, frame ->
 
-            playerRow.append(" ${i + 1}\t")
+            playerRow += " ${index + 1}\t"
 
-            if (frame.isStrike()) {
-                rollsRow.append("X ")
-                rollsRow.append(" ")
+            if (frame.isStrike) {
+                rollsRow += "X "
+                rollsRow += " "
             } else {
-                rollsRow.append("${frame.firstThrow} ")
-                rollsRow.append("${if (frame.firstThrow + frame.secondThrow == 10) "/" else frame.secondThrow} ")
+                rollsRow += "${frame.firstThrow} "
+                rollsRow += "${if (frame.firstThrow + frame.secondThrow == 10) "/" else frame.secondThrow} "
             }
 
-            scoreRow.append(" ${scores[i]}\t")
+            scoreRow += " ${scores[index]}\t"
         }
 
-        return "\n$playerRow\n$rollsRow\n$scoreRow"
+        return "$lineSeparator$playerRow$lineSeparator$rollsRow$lineSeparator$scoreRow"
     }
 }

@@ -2,15 +2,13 @@ package com.example.bowlingscoreboard
 
 class Frame(val firstThrow: Int, val secondThrow: Int) {
 
-    fun score(): Int {
-        return firstThrow + secondThrow
-    }
+    val score: Int
+        get() = firstThrow + secondThrow
 
-    fun isStrike(): Boolean {
-        return firstThrow == 10
-    }
+    val isStrike: Boolean
+        get() = firstThrow == 10
 
-    fun isSpare(): Boolean {
-        return !isStrike() && score() == 10
-    }
+    val isSpare: Boolean
+        get() =  !isStrike && score == 10
+
 }
